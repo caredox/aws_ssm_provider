@@ -24,9 +24,14 @@ This package supports setting application variables that are keyword lists. For 
     ]
 ]
 ```
+### Type Handling
+All SSM keys are returned as strings. If you want to set your value as another type, please see the supported types below.
 
-### Integers
-All SSM keys are returned as strings. If you want to set your value as an integer in your application, simply end your path in /Integer, for example: /staging/myApp/database/port/Integer
+#### Integers
+To set an integer in your application config, simply end your SSM path in /Integer. For example, if you wanted your port to be 4000 and not "4000" your SSM key would look like /staging/myApp/port/Integer
+
+#### Regular Expressions
+To set an regex in your application config, simply end your SSM path in /Regex. For example, if you wanted a fileName config to match "2019.csv" your SSM key would look like /staging/myApp/fileName/Regex. The value you enter in SSM would be (\\d{4}.csv). Notice the parantheses and the escape character for the back slash. 
 
 ### System Vars
 If you have a variable in your system environment that you want injected in an application configuration, simply end your path in /FromSystem, for example: /staging/myApp/database/host/FromSystem.  When using the system vars, the value of your SSM parameter will be the name of the environment variable. In this case, something like DB_HOST.
@@ -41,7 +46,7 @@ The package can be installed by adding `aws_ssm_provider` to your list of depend
 ```elixir
 def deps do
   [
-    {:aws_ssm_provider, "~> 0.1.0"}
+    {:aws_ssm_provider, "~> 0.1.1"}
   ]
 end
 ```

@@ -38,6 +38,12 @@ defmodule AwsSsmProvider do
     Application.put_env(app, head_key, elem(Integer.parse(val), 0))
   end
 
+  defp persist(val, [_env, _project, app, head_key | [:Regex]]) do
+    with {:ok, regex} <- Regex.compile(val) do
+      Application.put_env(app, head_key, regex[:Regex])
+    end
+  end
+
   defp persist(val, [_env, _project, app, head_key | []]) do
     Application.put_env(app, head_key, val)
   end
@@ -65,6 +71,12 @@ defmodule AwsSsmProvider do
 
   defp nested_case([:Integer], [{head, value} | parent_vars]) do
     [{head, elem(Integer.parse(value), 0)} | parent_vars]
+  end
+
+  defp nested_case([:Regex], [{head, value} | parent_vars]) do
+    with {:ok, regex} <- Regex.compile(value) do
+      [{head, regex} | parent_vars]
+    end
   end
 
   defp nested_case(tail, [{head, value} | parent_vars]) do
