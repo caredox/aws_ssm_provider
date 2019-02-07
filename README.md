@@ -33,7 +33,7 @@ To set an integer in your application config, simply end your SSM path in /Integ
 #### Regular Expressions
 To set an regex in your application config, simply end your SSM path in /Regex. For example, if you wanted a fileName config to match "2019.csv" your SSM key would look like /staging/myApp/fileName/Regex. The value you enter in SSM would be
 ```bash 
-(\\d{4}.csv). 
+(\\d{4}.csv)
 ```
 Notice the parantheses and the escape character for the back slash. 
 
