@@ -20,6 +20,10 @@
         "Value": "60000"
     },
     {
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/pattern/Regex",
+        "Value": "(\\d{4}.csv)"
+    },
+    {
         "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphqlWeb.Endpoint/secret_key_base/FromSystem",
         "Value": "PROD_SECRET_KEY_BASE"
     },
