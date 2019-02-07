@@ -33,11 +33,11 @@ To set an integer in your application config, simply end your SSM path in /Integ
 #### Regular Expressions
 To set an regex in your application config, simply end your SSM path in /Regex. For example, if you wanted a fileName config to match "2019.csv" your SSM key would look like /staging/myApp/fileName/Regex. The value you enter in SSM would be (\\d{4}.csv). Notice the parantheses and the escape character for the back slash. 
 
+#### Booleans
+"true" and "false" are translated to their respective boolean values.
+
 ### System Vars
 If you have a variable in your system environment that you want injected in an application configuration, simply end your path in /FromSystem, for example: /staging/myApp/database/host/FromSystem.  When using the system vars, the value of your SSM parameter will be the name of the environment variable. In this case, something like DB_HOST.
-
-### Booleans
-"true" and "false" are translated to their respective boolean values.
 
 ## Installation
 
