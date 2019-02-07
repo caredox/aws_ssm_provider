@@ -35,16 +35,12 @@ defmodule AwsSsmProvider do
   end
 
   defp persist(val, [_env, _project, app, head_key | [:Integer]]) do
-    IO.inspect(" ------------- #{val} -----------------Integer")
     Application.put_env(app, head_key, elem(Integer.parse(val), 0))
   end
 
   defp persist(val, [_env, _project, app, head_key | [:Regex]]) do
     with {:ok, regex} <- Regex.compile(val) do
-      IO.inspect(" ------------- #{regex} -----------------regex")
       Application.put_env(app, head_key, regex[:Regex])
-    else
-      error -> IO.inspect(" ------------- #{error} -----------------error")
     end
   end
 
