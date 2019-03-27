@@ -5,8 +5,8 @@ defmodule AwsSsmProviderTest do
   setup_all do
     file = Path.join([__DIR__, "fixtures", "provider.json"])
 
-    success = AwsSsmProvider.init([file])
-    %{success: success}
+    AwsSsmProvider.init([file])
+    %{}
   end
 
   test "can initialize provider from sample json" do
@@ -14,6 +14,11 @@ defmodule AwsSsmProviderTest do
              pattern: ~r/(\d{4}.csv)/,
              pool_timeout: 60000,
              port: 3306,
+             cors_origins: [
+               ~r/^https?:\/\/localhost:8081$/,
+               ~r/^https?:\/\/(.*.?)mydomain.com$/,
+               "http://myapp.elb.amazonaws.com"
+             ],
              nested: [test1: "44773"],
              test1: "39202",
              test1: "39201"
