@@ -16,7 +16,7 @@ defmodule AwsSsmProviderTest do
              port: 3306,
              cors_origins: [
                ~r/^https?:\/\/localhost:8081$/,
-               ~r/^https?:\/\/(.*.?)mydomain.com$/,
+               ~r/^https?:\/\/(.*)mydomain.com$/,
                "http://myapp.elb.amazonaws.com"
              ],
              nested: [test1: "44773"],
@@ -31,5 +31,11 @@ defmodule AwsSsmProviderTest do
   test "regex patterns are usable" do
     repo_vars = Application.get_env(:aws_ssm_provider, CaredoxGraphql.Repo)
     assert true == Regex.match?(repo_vars[:pattern], "2019.csv")
+  end
+
+  test "regex patterns in list are usable" do
+    repo_vars = Application.get_env(:aws_ssm_provider, CaredoxGraphql.Repo)
+    [o1, o2, o3] = repo_vars[:cors_origins]
+    assert true == Regex.match?(o2, "http://xyz.mydomain.com")
   end
 end
