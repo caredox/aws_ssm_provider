@@ -4,7 +4,6 @@ defmodule AwsSsmProvider do
   """
   use Mix.Releases.Config.Provider
 
-  # def start([config_path]) do
   def init([config_path]) do
     # Helper which expands paths to absolute form
     # and expands env vars in the path of the form `${VAR}`
@@ -12,48 +11,66 @@ defmodule AwsSsmProvider do
     {:ok, config_path} = Provider.expand_path(config_path)
     # All applications are already loaded at this point
     if File.exists?(config_path) do
-      {:ok, lines} = File.read(config_path)
-      json = Jason.decode!(lines)
-      set_vars(json)
+      File.read!(config_path)
+      |> Jason.decode!()
+      |> set_vars()
     else
-      :ok
+      :error
     end
   end
 
-  defp set_vars([]), do: nil
+  defp set_vars([]), do: :ok
 
   defp set_vars([head | tail]) do
     val = translate_values(head["Value"])
-    key_list = String.split(head["Name"], "/", trim: true)
-    atom_key_list = Enum.map(key_list, fn x -> String.to_atom(x) end)
-    persist(val, atom_key_list)
+
+    head["Name"]
+    |> String.split("/", trim: true)
+    |> Enum.map(&String.to_atom/1)
+    |> remove_ssm_keys
+    |> persist(val)
+
     set_vars(tail)
   end
 
-  defp persist(val, [_env, _project, app, head_key | [:FromSystem]]) do
+  defp remove_ssm_keys([_env, _project | tail]), do: tail
+
+  defp persist([app, head_key | [:FromSystem]], val) do
     Application.put_env(app, head_key, System.get_env(val))
   end
 
-  defp persist(val, [_env, _project, app, head_key | [:Integer]]) do
-    Application.put_env(app, head_key, elem(Integer.parse(val), 0))
+  defp persist([app, head_key | [:Integer]], val) do
+    Application.put_env(app, head_key, String.to_integer(val))
   end
 
-  defp persist(val, [_env, _project, app, head_key | [:Regex]]) do
+  defp persist([app, head_key | [:Regex]], val) do
     with {:ok, regex} <- Regex.compile(val) do
       Application.put_env(app, head_key, regex[:Regex])
     end
   end
 
-  defp persist(val, [_env, _project, app, head_key | []]) do
+  defp persist([app, head_key | [:JsonArray]], val) do
+    list_val = val |> Jason.decode() |> Enum.map(&handle_array_val/1)
+    Application.put_env(app, head_key, list_val[:JsonArray])
+  end
+
+  defp persist([app, head_key | []], val) do
     Application.put_env(app, head_key, val)
   end
 
-  defp persist(val, [_env, _project, app, head_key | tail_keys]) do
+  defp persist([app, head_key | tail_keys], val) do
     app_vars = Application.get_env(app, head_key) || []
     Application.put_env(app, head_key, get_nested_vars(app_vars, tail_keys, val))
   end
 
-  defp persist(_val, _), do: nil
+  defp handle_array_val(val) when is_binary(val) do
+    case String.split(val, "/Regex") do
+      [str] -> str
+      [regex, _b] -> regex |> Regex.compile!()
+    end
+  end
+
+  defp handle_array_val(val), do: val
 
   defp get_nested_vars(parent_vars, [head], value) do
     [{head, value} | parent_vars]
@@ -70,13 +87,18 @@ defmodule AwsSsmProvider do
   end
 
   defp nested_case([:Integer], [{head, value} | parent_vars]) do
-    [{head, elem(Integer.parse(value), 0)} | parent_vars]
+    [{head, String.to_integer(value)} | parent_vars]
   end
 
   defp nested_case([:Regex], [{head, value} | parent_vars]) do
     with {:ok, regex} <- Regex.compile(value) do
       [{head, regex} | parent_vars]
     end
+  end
+
+  defp nested_case([:JsonArray], [{head, value} | parent_vars]) do
+    list_val = value |> Jason.decode!() |> Enum.map(&handle_array_val/1)
+    [{head, list_val} | parent_vars]
   end
 
   defp nested_case(tail, [{head, value} | parent_vars]) do
