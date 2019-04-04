@@ -63,7 +63,7 @@ The package can be installed by adding `aws_ssm_provider` to your list of depend
 ```elixir
 def deps do
   [
-    {:aws_ssm_provider, "~> 0.1.1"}
+    {:aws_ssm_provider, "~> 0.1.3"}
   ]
 end
 ```
