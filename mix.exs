@@ -4,7 +4,7 @@ defmodule AwsSsmProvider.MixProject do
   def project do
     [
       app: :aws_ssm_provider,
-      version: "0.1.2",
+      version: "0.1.3",
       elixir: "~> 1.7",
       name: "AwsSsmProvider",
       description: "A configuration provider for Distillery which handles AWS SSM parameters",
