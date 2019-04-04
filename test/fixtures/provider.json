@@ -16,6 +16,10 @@
         "Value": "[\"^https?://localhost:8081$/Regex\",\"^https?://.*mydomain\\\\.com$/Regex\",\"http://myapp.elb.amazonaws.com\"]"
     },
     {
+        "Name": "/staging/manhattan/aws_ssm_provider/cors_origins/JsonArray",
+        "Value": "[\"^https?://localhost:8081$/Regex\",\"^https?://.*mydomain\\\\.com$/Regex\",\"http://myapp.elb.amazonaws.com\"]"
+    },
+    {
         "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/port/Integer",
         "Value": "3306"
     },
@@ -44,7 +48,11 @@
         "Value": "true"
     },
     {
-        "Name": "/staging/manhattan/aws_ssm_provider/bugsnag/use_logger3/FromSystem",
-        "Value": "PORTSZ"
+        "Name": "/staging/manhattan/aws_ssm_provider/use_logger3/Integer",
+        "Value": "2"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/use_logger4/Regex",
+        "Value": "(\\d{4}.csv)"
     }
 ]

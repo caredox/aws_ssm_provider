@@ -27,13 +27,13 @@ defmodule AwsSsmProvider do
     head["Name"]
     |> String.split("/", trim: true)
     |> Enum.map(&String.to_atom/1)
-    |> remove_ssm_keys
+    |> remove_prefix_keys
     |> persist(val)
 
     set_vars(tail)
   end
 
-  defp remove_ssm_keys([_env, _project | tail]), do: tail
+  defp remove_prefix_keys([_env, _project | tail]), do: tail
 
   defp persist([app, head_key | [:FromSystem]], val) do
     Application.put_env(app, head_key, System.get_env(val))
@@ -45,13 +45,13 @@ defmodule AwsSsmProvider do
 
   defp persist([app, head_key | [:Regex]], val) do
     with {:ok, regex} <- Regex.compile(val) do
-      Application.put_env(app, head_key, regex[:Regex])
+      Application.put_env(app, head_key, regex)
     end
   end
 
   defp persist([app, head_key | [:JsonArray]], val) do
-    list_val = val |> Jason.decode() |> Enum.map(&handle_array_val/1)
-    Application.put_env(app, head_key, list_val[:JsonArray])
+    list_val = val |> Jason.decode!() |> Enum.map(&handle_array_val/1)
+    Application.put_env(app, head_key, list_val)
   end
 
   defp persist([app, head_key | []], val) do
