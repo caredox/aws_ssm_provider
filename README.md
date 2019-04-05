@@ -48,6 +48,10 @@ To set a regex in your application config, simply end your SSM path in `/Regex`.
 
 Notice the parantheses and the escape character for the back slash.
 
+#### Arrays
+
+To set an integer in your application config, simply end your SSM path in `/JsonArray`. For example, if you wanted an array of login keys, your SSM key would look like `/staging/myApp/login_keys/JsonArray`. Each item in your array can be a String (default), or Regex. If you enter your values into the Parameter Store UI in the AWS console, it will handle escaping some characters for you, so you'd want to enter something like `["^.*specialKey\\.secret$/Regex","exact-match-key"]`.
+
 #### Booleans
 
 `"true"` and `"false"` are translated to their respective boolean values.
