@@ -32,10 +32,6 @@
         "Value": "(\\d{4}.csv)"
     },
     {
-        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphqlWeb.Endpoint/secret_key_base/FromSystem",
-        "Value": "PROD_SECRET_KEY_BASE"
-    },
-    {
         "Name": "/staging/manhattan/aws_ssm_provider/use_logger",
         "Value": "true"
     },
@@ -54,5 +50,29 @@
     {
         "Name": "/staging/manhattan/aws_ssm_provider/use_logger4/Regex",
         "Value": "(\\d{4}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/string_val",
+        "Value": "a string"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/int_val/Integer",
+        "Value": "1001"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/int_val/Integer",
+        "Value": "1002"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/string_val",
+        "Value": "1003"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/user/FromSystem",
+        "Value": "USER"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/file_name/Regex",
+        "Value": "(\\d{5}.csv)"
     }
 ]
