@@ -88,6 +88,24 @@ defmodule AwsSsmProviderTest do
     assert true == Regex.match?(origin2, "http://xyz.mydomain.com")
   end
 
+  test "ints in jsonArray are usable" do
+    assert [1, 8, 2] == Application.get_env(:aws_ssm_provider, :int_array)
+  end
+
+  test "ints in nested jsonArray are usable" do
+    assert [7, 0, 2] == Application.get_env(:aws_ssm_provider, :nested)[:int_array]
+  end
+
+  test "arrays in jsonArray are usable" do
+    assert [2, "root_string", [3, "root_nested_string"]] ==
+             Application.get_env(:aws_ssm_provider, :nested_array)
+  end
+
+  test "arrays in nested jsonArray are usable" do
+    assert [9, "string", [8, "nested_string"]] ==
+             Application.get_env(:aws_ssm_provider, :nested)[:nested_array]
+  end
+
   test "regex patterns in nested list are usable" do
     repo_vars = Application.get_env(:aws_ssm_provider, CaredoxGraphql.Repo)
     [_o1, origin2, _o3] = repo_vars[:cors_origins]

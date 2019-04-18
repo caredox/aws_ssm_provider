@@ -70,7 +70,11 @@ defmodule AwsSsmProvider do
     end
   end
 
-  defp handle_array_val(val), do: val
+  defp handle_array_val(val) when is_list(val) do
+    val |> Enum.map(&handle_array_val/1)
+  end
+
+  defp handle_array_val(val) when is_integer(val), do: val
 
   defp get_nested_vars(parent_vars, [head], value) do
     [{head, value} | parent_vars]
