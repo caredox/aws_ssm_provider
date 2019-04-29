@@ -24,8 +24,17 @@ defmodule AwsSsmProviderTest do
       port: 3306,
       cors_origins: cors_origins(),
       nested: [test1: "44773"],
-      test1: "39202",
-      test1: "39201"
+      test1: "39202"
+    ]
+  end
+
+  defp nested_vars do
+    [
+      nested_duplicate_json_array: [9, 2, 2],
+      nested_duplicate_system_var: "erikosmond",
+      nested_duplicate_regex: ~r/(\d{3}.csv)/,
+      nested_duplicate_integer: 4,
+      nested_duplicate_string: "dup_string_4"
     ]
   end
 
@@ -116,5 +125,31 @@ defmodule AwsSsmProviderTest do
     repo_vars = Application.get_env(:aws_ssm_provider, CaredoxGraphql.Repo)
     [_o1, origin2, _o3] = repo_vars[:cors_origins]
     assert false == Regex.match?(origin2, "http://xyz.mydomainPcom")
+  end
+
+  test "duplicate strings are overwritten at the root level config" do
+    assert "dup_string_2" == Application.get_env(:aws_ssm_provider, :duplicate_string)
+  end
+
+  test "duplicate integers are overwritten at the root level config" do
+    assert 2 == Application.get_env(:aws_ssm_provider, :duplicate_integer)
+  end
+
+  test "duplicate regex are overwritten at the root level config" do
+    assert ~r/(\d{2}.csv)/ == Application.get_env(:aws_ssm_provider, :duplicate_regex)
+  end
+
+  test "duplicate system vars are overwritten at the root level config" do
+    assert System.get_env("HOME") == Application.get_env(:aws_ssm_provider, :duplicate_system_var)
+  end
+
+  test "duplicate JSON arrays are overwritten at the root level config" do
+    assert [6, 5, 4] == Application.get_env(:aws_ssm_provider, :duplicate_json_array)
+  end
+
+  test "duplicate strings are overwritten in nested config" do
+    nested_duplicates = Application.get_env(:aws_ssm_provider, :nested_dups)
+
+    assert nested_duplicates == nested_vars()
   end
 end

@@ -88,6 +88,86 @@
         "Value": "USER"
     },
     {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_string",
+        "Value": "dup_string_1"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_string",
+        "Value": "dup_string_2"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_integer/Integer",
+        "Value": "1"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_integer/Integer",
+        "Value": "2"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_regex/Regex",
+        "Value": "(\\d{1}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_regex/Regex",
+        "Value": "(\\d{2}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_system_var/FromSystem",
+        "Value": "USER"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_system_var/FromSystem",
+        "Value": "HOME"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_json_array/JsonArray",
+        "Value": "[1,2,3]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_json_array/JsonArray",
+        "Value": "[6,5,4]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_string",
+        "Value": "dup_string_3"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_string",
+        "Value": "dup_string_4"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_integer/Integer",
+        "Value": "3"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_integer/Integer",
+        "Value": "4"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_regex/Regex",
+        "Value": "(\\d{4}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_regex/Regex",
+        "Value": "(\\d{3}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_system_var/FromSystem",
+        "Value": "HOME"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_system_var/FromSystem",
+        "Value": "USER"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_json_array/JsonArray",
+        "Value": "[3,8,8]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_json_array/JsonArray",
+        "Value": "[9,2,2]"
+    },
+    {
         "Name": "/staging/manhattan/aws_ssm_provider/nested/file_name/Regex",
         "Value": "(\\d{5}.csv)"
     }

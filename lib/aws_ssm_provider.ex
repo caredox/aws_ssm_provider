@@ -60,7 +60,7 @@ defmodule AwsSsmProvider do
 
   defp persist([app, head_key | tail_keys], val) do
     app_vars = Application.get_env(app, head_key) || []
-    Application.put_env(app, head_key, get_nested_vars(app_vars, tail_keys, val))
+    Application.put_env(app, head_key, get_and_set_nested_vars(app_vars, tail_keys, val))
   end
 
   defp handle_array_val(val) when is_binary(val) do
@@ -76,12 +76,16 @@ defmodule AwsSsmProvider do
 
   defp handle_array_val(val) when is_integer(val), do: val
 
-  defp get_nested_vars(parent_vars, [head], value) do
+  defp get_and_set_nested_vars(parent_vars, head, value) do
+    Keyword.drop(parent_vars, head)
+    |> set_nested_vars(head, value)
+  end
+
+  defp set_nested_vars(parent_vars, [head], value) do
     [{head, value} | parent_vars]
   end
 
-  defp get_nested_vars(parent_vars, key_list, value) do
-    parent_vars = parent_vars
+  defp set_nested_vars(parent_vars, key_list, value) do
     [head | tail] = key_list
     nested_case(tail, [{head, value} | parent_vars])
   end
@@ -107,7 +111,7 @@ defmodule AwsSsmProvider do
 
   defp nested_case(tail, [{head, value} | parent_vars]) do
     curr_vars = parent_vars[head] || []
-    [{head, get_nested_vars(curr_vars, tail, value)} | parent_vars]
+    [{head, get_and_set_nested_vars(curr_vars, tail, value)} | parent_vars]
   end
 
   defp translate_values(v) do
