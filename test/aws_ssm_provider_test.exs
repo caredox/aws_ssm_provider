@@ -19,22 +19,22 @@ defmodule AwsSsmProviderTest do
 
   defp repo_vars do
     [
-      pattern: ~r/(\d{4}.csv)/,
-      pool_timeout: 60000,
-      port: 3306,
+      nested: [shared_with_nested: "44773"],
+      shared_with_nested: "39202",
       cors_origins: cors_origins(),
-      nested: [test1: "44773"],
-      test1: "39202"
+      port: 3306,
+      pool_timeout: 60000,
+      pattern: ~r/(\d{4}.csv)/
     ]
   end
 
   defp nested_vars do
     [
-      nested_duplicate_json_array: [9, 2, 2],
-      nested_duplicate_system_var: "erikosmond",
-      nested_duplicate_regex: ~r/(\d{3}.csv)/,
+      nested_duplicate_string: "dup_string_4",
       nested_duplicate_integer: 4,
-      nested_duplicate_string: "dup_string_4"
+      nested_duplicate_regex: ~r/(\d{3}.csv)/,
+      nested_duplicate_system_var: "erikosmond",
+      nested_duplicate_json_array: [9, 2, 2]
     ]
   end
 

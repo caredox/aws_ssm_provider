@@ -1,14 +1,14 @@
 [
     {
-        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/test1",
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/shared_with_nested",
         "Value": "39201"
     },
     {
-        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/test1",
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/shared_with_nested",
         "Value": "39202"
     },
     {
-        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/nested/test1",
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/nested/shared_with_nested",
         "Value": "44773"
     },
     {

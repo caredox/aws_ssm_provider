@@ -60,7 +60,7 @@ defmodule AwsSsmProvider do
 
   defp persist([app, head_key | tail_keys], val) do
     app_vars = Application.get_env(app, head_key) || []
-    Application.put_env(app, head_key, get_and_set_nested_vars(app_vars, tail_keys, val))
+    Application.put_env(app, head_key, set_nested_vars(app_vars, tail_keys, val))
   end
 
   defp handle_array_val(val) when is_binary(val) do
@@ -76,42 +76,42 @@ defmodule AwsSsmProvider do
 
   defp handle_array_val(val) when is_integer(val), do: val
 
-  defp get_and_set_nested_vars(parent_vars, head, value) do
-    Keyword.drop(parent_vars, head)
-    |> set_nested_vars(head, value)
-  end
-
   defp set_nested_vars(parent_vars, [head], value) do
-    [{head, value} | parent_vars]
+    Keyword.drop(parent_vars, [head])
+    |> List.flatten([{head, value}])
   end
 
-  defp set_nested_vars(parent_vars, key_list, value) do
-    [head | tail] = key_list
+  defp set_nested_vars(parent_vars, [head | tail], value) do
     nested_case(tail, [{head, value} | parent_vars])
   end
 
   defp nested_case([:FromSystem], [{head, value} | parent_vars]) do
-    [{head, System.get_env(value)} | parent_vars]
+    Keyword.drop(parent_vars, [head])
+    |> List.flatten([{head, System.get_env(value)}])
   end
 
   defp nested_case([:Integer], [{head, value} | parent_vars]) do
-    [{head, String.to_integer(value)} | parent_vars]
+    Keyword.drop(parent_vars, [head])
+    |> List.flatten([{head, String.to_integer(value)}])
   end
 
   defp nested_case([:Regex], [{head, value} | parent_vars]) do
     with {:ok, regex} <- Regex.compile(value) do
-      [{head, regex} | parent_vars]
+      Keyword.drop(parent_vars, [head])
+      |> List.flatten([{head, regex}])
     end
   end
 
   defp nested_case([:JsonArray], [{head, value} | parent_vars]) do
     list_val = value |> Jason.decode!() |> Enum.map(&handle_array_val/1)
-    [{head, list_val} | parent_vars]
+
+    Keyword.drop(parent_vars, [head])
+    |> List.flatten([{head, list_val}])
   end
 
   defp nested_case(tail, [{head, value} | parent_vars]) do
     curr_vars = parent_vars[head] || []
-    [{head, get_and_set_nested_vars(curr_vars, tail, value)} | parent_vars]
+    [{head, set_nested_vars(curr_vars, tail, value)} | parent_vars]
   end
 
   defp translate_values(v) do
