@@ -38,8 +38,9 @@ defmodule AwsSsmProvider do
 
   defp set_app_name(name, []), do: name
 
-  # if an app_name was provided, we want to replace the app_name retrieved from SSM
-  # this is useful when we pull global configs, but need to assign it to an app not named :global
+  # If an app_name was provided to the config provider,
+  # then we want to replace the content retrieved from SSM if it was set to host_app.
+  # This is useful when we pull shared configs, but need to assign it to an app not named :host_app.
   defp set_app_name(name, [app_name]) when is_atom(app_name) do
     [head | tail] = name
 
