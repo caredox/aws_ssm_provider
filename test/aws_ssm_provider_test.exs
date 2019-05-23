@@ -3,9 +3,11 @@ defmodule AwsSsmProviderTest do
   doctest AwsSsmProvider
 
   setup_all do
-    file = Path.join([__DIR__, "fixtures", "provider.json"])
+    app_configs = Path.join([__DIR__, "fixtures", "app_configs.json"])
+    global_configs = Path.join([__DIR__, "fixtures", "global_configs.json"])
 
-    AwsSsmProvider.init([file])
+    AwsSsmProvider.init([global_configs, :aws_ssm_provider])
+    AwsSsmProvider.init([app_configs])
     %{}
   end
 
@@ -151,5 +153,67 @@ defmodule AwsSsmProviderTest do
     nested_duplicates = Application.get_env(:aws_ssm_provider, :nested_dups)
 
     assert nested_duplicates == nested_vars()
+  end
+
+  test "global var is overwritten by app config" do
+    assert "this was overwritten" == Application.get_env(:aws_ssm_provider, :overwritten_config)
+  end
+
+  test "global var was overwritten with key name starting with global/global" do
+    assert "app and env is global was overwritten" ==
+             Application.get_env(:aws_ssm_provider, :overwritten_app_and_env_config)
+  end
+
+  test "global var was overwritten when just the app was global" do
+    assert "app is global this was overwritten" ==
+             Application.get_env(:aws_ssm_provider, :overwritten_app_config)
+  end
+
+  test "global nested var overwritten nested" do
+    assert "this was overwritten nested" ==
+             Application.get_env(:aws_ssm_provider, :nested)[:overwritten_nested_config]
+  end
+
+  test "global nested app var overwritten" do
+    assert "app is global nested was overwritten" ==
+             Application.get_env(:aws_ssm_provider, :nested)[:overwritten_nested_app_config]
+  end
+
+  test "global nested app and env var overwritten" do
+    assert "app and env is global nested was overwritten" ==
+             Application.get_env(:aws_ssm_provider, :nested)[
+               :overwritten_nested_app_and_env_config
+             ]
+  end
+
+  test "unique global var is present" do
+    assert "from global" == Application.get_env(:aws_ssm_provider, :unique_global_config)
+  end
+
+  test "unique global app var is present" do
+    assert "app is global from global" ==
+             Application.get_env(:aws_ssm_provider, :unique_global_app_config)
+  end
+
+  test "unique global app and env var is present" do
+    assert "app and env is global from global" ==
+             Application.get_env(:aws_ssm_provider, :unique_global_app_and_env_config)
+  end
+
+  test "nested unique global var is present" do
+    assert "nested from global" ==
+             Application.get_env(:aws_ssm_provider, :nested)[:unique_nested_global_config]
+  end
+
+  test "nested unique global app var is present" do
+    assert "app is global nested from global" ==
+             Application.get_env(:aws_ssm_provider, :nested)[:unique_nested_app_global_config]
+  end
+
+  test "nested unique global app and env var is present" do
+    assert "app and env is global nested from global" ==
+             Application.get_env(:aws_ssm_provider, :nested)[
+               :unique_nested_app_and_env_global_config
+             ]
   end
 end

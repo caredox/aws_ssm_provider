@@ -4,7 +4,9 @@ defmodule AwsSsmProvider do
   """
   use Mix.Releases.Config.Provider
 
-  def init([config_path]) do
+  @replacement_key :host_app
+
+  def init([config_path | app_name]) do
     # Helper which expands paths to absolute form
     # and expands env vars in the path of the form `${VAR}`
     # to their value in the system environment
@@ -13,24 +15,40 @@ defmodule AwsSsmProvider do
     if File.exists?(config_path) do
       File.read!(config_path)
       |> Jason.decode!()
-      |> set_vars()
+      |> set_vars(app_name)
     else
       :error
     end
   end
 
-  defp set_vars([]), do: :ok
+  defp set_vars([], _), do: :ok
 
-  defp set_vars([head | tail]) do
+  defp set_vars([head | tail], app_name) do
     val = translate_values(head["Value"])
 
     head["Name"]
     |> String.split("/", trim: true)
     |> Enum.map(&String.to_atom/1)
     |> remove_prefix_keys
+    |> set_app_name(app_name)
     |> persist(val)
 
-    set_vars(tail)
+    set_vars(tail, app_name)
+  end
+
+  defp set_app_name(name, []), do: name
+
+  # If an app_name was provided to the config provider,
+  # then we want to replace the content retrieved from SSM if it was set to host_app.
+  # This is useful when we pull shared configs, but need to assign it to an app not named :host_app.
+  defp set_app_name(name, [app_name]) when is_atom(app_name) do
+    [head | tail] = name
+
+    if head == @replacement_key do
+      [app_name | tail]
+    else
+      name
+    end
   end
 
   defp remove_prefix_keys([_env, _project | tail]), do: tail

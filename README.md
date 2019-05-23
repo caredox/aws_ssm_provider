@@ -9,12 +9,28 @@ To generate the file the config provider will read, run a command similar to
 
 ```bash
 aws --region us-east-1 ssm get-parameters-by-path --path "/${SECRETS_PATH}/YOUR_PROJECT/" --recursive --with-decryption --query "Parameters[]" \
-    > /app/_build/prod/rel/<your_project>/config.json
+    > /etc/app_secrets.json
 ```
 
 AWS recommends the path of the parameter keys follow a pattern similar to `/environment/project/service/config_key`
 
 For example, a typical path you might set in SSM for your elixir project would be `/production/myApp/redix/port`
+
+### Shared Configs
+
+In order to share configs across environments, aws_ssm_provider looks for the magic string `host_app` and replaces it with the second element in the list passed to the provider. The second element is optional in the list.  
+
+If you had an SSM config that looked like `/production/my_project/host_app/shared_config`, and your `rel/config.exs` file had something that looked like this
+
+```elixir
+  set(
+    config_providers: [
+      {AwsSsmProvider, ["/etc/shared_secrets.json", :my_otp_app]}
+    ]
+  )
+```
+
+then the shared config would be placed in your app called `my_otp_app`.
 
 ### Nesting
 
