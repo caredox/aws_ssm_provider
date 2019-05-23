@@ -170,5 +170,53 @@
     {
         "Name": "/staging/manhattan/aws_ssm_provider/nested/file_name/Regex",
         "Value": "(\\d{5}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/overwritten_nested_config",
+        "Value": "this was overwritten nested"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/overwritten_config",
+        "Value": "this was overwritten"
+    },
+    {
+        "Name": "/staging/global/aws_ssm_provider/nested/overwritten_nested_app_config",
+        "Value": "app is global nested was overwritten"
+    },
+    {
+        "Name": "/staging/global/aws_ssm_provider/overwritten_app_config",
+        "Value": "app is global this was overwritten"
+    },
+    {
+        "Name": "/global/global/aws_ssm_provider/nested/overwritten_nested_app_and_env_config",
+        "Value": "app and env is global nested was overwritten"
+    },
+    {
+        "Name": "/global/global/aws_ssm_provider/overwritten_app_and_env_config",
+        "Value": "app and env is global was overwritten"
+    },
+    {
+        "Name": "/staging/manhattan/hostapp/nested/overwritten_nested_config",
+        "Value": "this was overwritten nested hostapp"
+    },
+    {
+        "Name": "/staging/manhattan/hostapp/overwritten_config",
+        "Value": "this was overwritten hostapp"
+    },
+    {
+        "Name": "/staging/global/hostapp/nested/overwritten_nested_app_config",
+        "Value": "app is hostapp nested was overwritten"
+    },
+    {
+        "Name": "/staging/global/hostapp/overwritten_app_config",
+        "Value": "app is hostapp this was overwritten"
+    },
+    {
+        "Name": "/global/global/hostapp/nested/overwritten_nested_app_and_env_config",
+        "Value": "app and env is hostapp nested was overwritten"
+    },
+    {
+        "Name": "/global/global/hostapp/overwritten_app_and_env_config",
+        "Value": "app and env is hostapp was overwritten"
     }
 ]
