@@ -35,7 +35,7 @@ defmodule AwsSsmProviderTest do
       nested_duplicate_string: "dup_string_4",
       nested_duplicate_integer: 4,
       nested_duplicate_regex: ~r/(\d{3}.csv)/,
-      nested_duplicate_system_var: "erikosmond",
+      nested_duplicate_system_var: System.get_env("USER"),
       nested_duplicate_json_array: [9, 2, 2]
     ]
   end
