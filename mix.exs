@@ -23,7 +23,7 @@ defmodule AwsSsmProvider.MixProject do
 
   defp deps do
     [
-      {:distillery, "~> 2.0"},
+      {:distillery, "~> 2.0.14"},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:jason, "~> 1.1"}
     ]
