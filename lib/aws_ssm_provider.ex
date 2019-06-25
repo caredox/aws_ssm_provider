@@ -2,7 +2,7 @@ defmodule AwsSsmProvider do
   @moduledoc """
   Populate run time application variables from a file produced by a call to AWS SSM
   """
-  use Mix.Releases.Config.Provider
+  use Distillery.Releases.Config.Provider
 
   @replacement_key :host_app
 
