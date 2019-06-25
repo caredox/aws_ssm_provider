@@ -1,0 +1,66 @@
+[
+    {
+        "Name": "/staging/manhattan/host_app/nested/unique_nested_global_config",
+        "Value": "nested from global"
+    },
+    {
+        "Name": "/staging/manhattan/host_app/nested/overwritten_nested_config",
+        "Value": "this will get overwritten"
+    },
+    {
+        "Name": "/staging/manhattan/host_app/unique_global_config",
+        "Value": "from global"
+    },
+    {
+        "Name": "/staging/manhattan/host_app/overwritten_config",
+        "Value": "this will get overwritten"
+    },
+    {
+        "Name": "/staging/global/host_app/nested/unique_nested_app_global_config",
+        "Value": "app is global nested from global"
+    },
+    {
+        "Name": "/staging/global/host_app/nested/overwritten_nested_app_config",
+        "Value": "app is global this will get overwritten"
+    },
+    {
+        "Name": "/staging/global/host_app/unique_global_app_config",
+        "Value": "app is global from global"
+    },
+    {
+        "Name": "/staging/global/host_app/overwritten_app_config",
+        "Value": "app is global this will get overwritten"
+    },
+    {
+        "Name": "/global/global/host_app/nested/unique_nested_app_and_env_global_config",
+        "Value": "app and env is global nested from global"
+    },
+    {
+        "Name": "/global/global/host_app/nested/overwritten_nested_app_and_env_config",
+        "Value": "app and env is global this will get overwritten"
+    },
+    {
+        "Name": "/global/global/host_app/unique_global_app_and_env_config",
+        "Value": "app and env is global from global"
+    },
+    {
+        "Name": "/global/global/host_app/overwritten_app_and_env_config",
+        "Value": "app and env is global this will get overwritten"
+    },
+    {
+        "Name": "/global/global/global/nested/non_hostname_unique_nested_app_and_env_global_config",
+        "Value": "app and env is global nested should not show up in aws_ssm_provider env"
+    },
+    {
+        "Name": "/global/global/global/nested/non_hostname_overwritten_nested_app_and_env_config",
+        "Value": "app and env is global  should not show up in aws_ssm_provider env"
+    },
+    {
+        "Name": "/global/global/global/non_hostname_unique_global_app_and_env_config",
+        "Value": "app and env is global from global should not show up in aws_ssm_provider env"
+    },
+    {
+        "Name": "/global/global/global/non_hostname_overwritten_app_and_env_config",
+        "Value": "app and env is global this will get overwritten should not show up in aws_ssm_provider env"
+    }
+]

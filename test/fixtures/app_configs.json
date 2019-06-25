@@ -1,0 +1,222 @@
+[
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/shared_with_nested",
+        "Value": "39201"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/shared_with_nested",
+        "Value": "39202"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/nested/shared_with_nested",
+        "Value": "44773"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/cors_origins/JsonArray",
+        "Value": "[\"^https?://localhost:8081$/Regex\",\"^https?://.*mydomain\\\\.com$/Regex\",\"http://myapp.elb.amazonaws.com\"]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/cors_origins/JsonArray",
+        "Value": "[\"^https?://localhost:8081$/Regex\",\"^https?://.*mydomain\\\\.com$/Regex\",\"http://myapp.elb.amazonaws.com\"]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/int_array/JsonArray",
+        "Value": "[1, 8, 2]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/int_array/JsonArray",
+        "Value": "[7, 0, 2]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_array/JsonArray",
+        "Value": "[2, \"root_string\", [3, \"root_nested_string\"]]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/nested_array/JsonArray",
+        "Value": "[9, \"string\", [8, \"nested_string\"]]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/port/Integer",
+        "Value": "3306"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/pool_timeout/Integer",
+        "Value": "60000"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/Elixir.CaredoxGraphql.Repo/pattern/Regex",
+        "Value": "(\\d{4}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/use_logger",
+        "Value": "true"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/home/FromSystem",
+        "Value": "HOME"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/bugsnag/use_logger2",
+        "Value": "true"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/use_logger3/Integer",
+        "Value": "2"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/use_logger4/Regex",
+        "Value": "(\\d{4}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/string_val",
+        "Value": "a string"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/int_val/Integer",
+        "Value": "1001"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/int_val/Integer",
+        "Value": "1002"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/string_val",
+        "Value": "1003"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/user/FromSystem",
+        "Value": "USER"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_string",
+        "Value": "dup_string_1"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_string",
+        "Value": "dup_string_2"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_integer/Integer",
+        "Value": "1"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_integer/Integer",
+        "Value": "2"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_regex/Regex",
+        "Value": "(\\d{1}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_regex/Regex",
+        "Value": "(\\d{2}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_system_var/FromSystem",
+        "Value": "USER"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_system_var/FromSystem",
+        "Value": "HOME"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_json_array/JsonArray",
+        "Value": "[1,2,3]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/duplicate_json_array/JsonArray",
+        "Value": "[6,5,4]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_string",
+        "Value": "dup_string_3"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_string",
+        "Value": "dup_string_4"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_integer/Integer",
+        "Value": "3"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_integer/Integer",
+        "Value": "4"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_regex/Regex",
+        "Value": "(\\d{4}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_regex/Regex",
+        "Value": "(\\d{3}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_system_var/FromSystem",
+        "Value": "HOME"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_system_var/FromSystem",
+        "Value": "USER"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_json_array/JsonArray",
+        "Value": "[3,8,8]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested_dups/nested_duplicate_json_array/JsonArray",
+        "Value": "[9,2,2]"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/file_name/Regex",
+        "Value": "(\\d{5}.csv)"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/nested/overwritten_nested_config",
+        "Value": "this was overwritten nested"
+    },
+    {
+        "Name": "/staging/manhattan/aws_ssm_provider/overwritten_config",
+        "Value": "this was overwritten"
+    },
+    {
+        "Name": "/staging/global/aws_ssm_provider/nested/overwritten_nested_app_config",
+        "Value": "app is global nested was overwritten"
+    },
+    {
+        "Name": "/staging/global/aws_ssm_provider/overwritten_app_config",
+        "Value": "app is global this was overwritten"
+    },
+    {
+        "Name": "/global/global/aws_ssm_provider/nested/overwritten_nested_app_and_env_config",
+        "Value": "app and env is global nested was overwritten"
+    },
+    {
+        "Name": "/global/global/aws_ssm_provider/overwritten_app_and_env_config",
+        "Value": "app and env is global was overwritten"
+    },
+    {
+        "Name": "/staging/manhattan/hostapp/nested/overwritten_nested_config",
+        "Value": "this was overwritten nested hostapp"
+    },
+    {
+        "Name": "/staging/manhattan/hostapp/overwritten_config",
+        "Value": "this was overwritten hostapp"
+    },
+    {
+        "Name": "/staging/global/hostapp/nested/overwritten_nested_app_config",
+        "Value": "app is hostapp nested was overwritten"
+    },
+    {
+        "Name": "/staging/global/hostapp/overwritten_app_config",
+        "Value": "app is hostapp this was overwritten"
+    },
+    {
+        "Name": "/global/global/hostapp/nested/overwritten_nested_app_and_env_config",
+        "Value": "app and env is hostapp nested was overwritten"
+    },
+    {
+        "Name": "/global/global/hostapp/overwritten_app_and_env_config",
+        "Value": "app and env is hostapp was overwritten"
+    }
+]

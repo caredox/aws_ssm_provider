@@ -4,84 +4,132 @@ defmodule AwsSsmProvider do
   """
   use Mix.Releases.Config.Provider
 
-  # def start([config_path]) do
-  def init([config_path]) do
+  @replacement_key :host_app
+
+  def init([config_path | app_name]) do
     # Helper which expands paths to absolute form
     # and expands env vars in the path of the form `${VAR}`
     # to their value in the system environment
     {:ok, config_path} = Provider.expand_path(config_path)
     # All applications are already loaded at this point
     if File.exists?(config_path) do
-      {:ok, lines} = File.read(config_path)
-      json = Jason.decode!(lines)
-      set_vars(json)
+      File.read!(config_path)
+      |> Jason.decode!()
+      |> set_vars(app_name)
     else
-      :ok
+      :error
     end
   end
 
-  defp set_vars([]), do: nil
+  defp set_vars([], _), do: :ok
 
-  defp set_vars([head | tail]) do
+  defp set_vars([head | tail], app_name) do
     val = translate_values(head["Value"])
-    key_list = String.split(head["Name"], "/", trim: true)
-    atom_key_list = Enum.map(key_list, fn x -> String.to_atom(x) end)
-    persist(val, atom_key_list)
-    set_vars(tail)
+
+    head["Name"]
+    |> String.split("/", trim: true)
+    |> Enum.map(&String.to_atom/1)
+    |> remove_prefix_keys
+    |> set_app_name(app_name)
+    |> persist(val)
+
+    set_vars(tail, app_name)
   end
 
-  defp persist(val, [_env, _project, app, head_key | [:FromSystem]]) do
+  defp set_app_name(name, []), do: name
+
+  # If an app_name was provided to the config provider,
+  # then we want to replace the content retrieved from SSM if it was set to host_app.
+  # This is useful when we pull shared configs, but need to assign it to an app not named :host_app.
+  defp set_app_name(name, [app_name]) when is_atom(app_name) do
+    [head | tail] = name
+
+    if head == @replacement_key do
+      [app_name | tail]
+    else
+      name
+    end
+  end
+
+  defp remove_prefix_keys([_env, _project | tail]), do: tail
+
+  defp persist([app, head_key | [:FromSystem]], val) do
     Application.put_env(app, head_key, System.get_env(val))
   end
 
-  defp persist(val, [_env, _project, app, head_key | [:Integer]]) do
-    Application.put_env(app, head_key, elem(Integer.parse(val), 0))
+  defp persist([app, head_key | [:Integer]], val) do
+    Application.put_env(app, head_key, String.to_integer(val))
   end
 
-  defp persist(val, [_env, _project, app, head_key | [:Regex]]) do
+  defp persist([app, head_key | [:Regex]], val) do
     with {:ok, regex} <- Regex.compile(val) do
-      Application.put_env(app, head_key, regex[:Regex])
+      Application.put_env(app, head_key, regex)
     end
   end
 
-  defp persist(val, [_env, _project, app, head_key | []]) do
+  defp persist([app, head_key | [:JsonArray]], val) do
+    list_val = val |> Jason.decode!() |> Enum.map(&handle_array_val/1)
+    Application.put_env(app, head_key, list_val)
+  end
+
+  defp persist([app, head_key | []], val) do
     Application.put_env(app, head_key, val)
   end
 
-  defp persist(val, [_env, _project, app, head_key | tail_keys]) do
+  defp persist([app, head_key | tail_keys], val) do
     app_vars = Application.get_env(app, head_key) || []
-    Application.put_env(app, head_key, get_nested_vars(app_vars, tail_keys, val))
+    Application.put_env(app, head_key, set_nested_vars(app_vars, tail_keys, val))
   end
 
-  defp persist(_val, _), do: nil
-
-  defp get_nested_vars(parent_vars, [head], value) do
-    [{head, value} | parent_vars]
+  defp handle_array_val(val) when is_binary(val) do
+    case String.split(val, "/Regex") do
+      [str] -> str
+      [regex, _b] -> regex |> Regex.compile!()
+    end
   end
 
-  defp get_nested_vars(parent_vars, key_list, value) do
-    parent_vars = parent_vars
-    [head | tail] = key_list
+  defp handle_array_val(val) when is_list(val) do
+    val |> Enum.map(&handle_array_val/1)
+  end
+
+  defp handle_array_val(val) when is_integer(val), do: val
+
+  defp set_nested_vars(parent_vars, [head], value) do
+    Keyword.drop(parent_vars, [head])
+    |> List.flatten([{head, value}])
+  end
+
+  defp set_nested_vars(parent_vars, [head | tail], value) do
     nested_case(tail, [{head, value} | parent_vars])
   end
 
   defp nested_case([:FromSystem], [{head, value} | parent_vars]) do
-    [{head, System.get_env(value)} | parent_vars]
+    Keyword.drop(parent_vars, [head])
+    |> List.flatten([{head, System.get_env(value)}])
   end
 
   defp nested_case([:Integer], [{head, value} | parent_vars]) do
-    [{head, elem(Integer.parse(value), 0)} | parent_vars]
+    Keyword.drop(parent_vars, [head])
+    |> List.flatten([{head, String.to_integer(value)}])
   end
 
   defp nested_case([:Regex], [{head, value} | parent_vars]) do
     with {:ok, regex} <- Regex.compile(value) do
-      [{head, regex} | parent_vars]
+      Keyword.drop(parent_vars, [head])
+      |> List.flatten([{head, regex}])
     end
+  end
+
+  defp nested_case([:JsonArray], [{head, value} | parent_vars]) do
+    list_val = value |> Jason.decode!() |> Enum.map(&handle_array_val/1)
+
+    Keyword.drop(parent_vars, [head])
+    |> List.flatten([{head, list_val}])
   end
 
   defp nested_case(tail, [{head, value} | parent_vars]) do
     curr_vars = parent_vars[head] || []
-    [{head, get_nested_vars(curr_vars, tail, value)} | parent_vars]
+    [{head, set_nested_vars(curr_vars, tail, value)} | parent_vars]
   end
 
   defp translate_values(v) do
