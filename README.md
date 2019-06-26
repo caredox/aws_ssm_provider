@@ -78,19 +78,19 @@ If you have a variable in your system environment that you want injected in an a
 
 ## Installation
 
+The correct version for your needs depends on the version of Distillery your project uses:
+
+- For Distillery versions `2.1.0` and later, you want `{:aws_ssm_provider, "~> 0.3.0"}`.
+- For Distillery versions `2.0.14` and earlier, you want `{:aws_ssm_provider, "~> 0.2.1"}`.
+
 The package can be installed by adding `aws_ssm_provider` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:aws_ssm_provider, "~> 0.2.1"}
+    {:aws_ssm_provider, "~> 0.3.0"}
   ]
 end
 ```
-
-The correct version for your needs depends on the version of Distillery your project uses:
-
-- For Distillery versions `2.1.0` and later, you want `{:aws_ssm_provider, "~> 0.3.0"}`.
-- For Distillery versions `2.0.14` and earlier, you want `{:aws_ssm_provider, "~> 0.2.1"}`.
 
 The docs can be found at [https://hexdocs.pm/aws_ssm_provider](https://hexdocs.pm/aws_ssm_provider).
