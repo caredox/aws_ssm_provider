@@ -4,8 +4,8 @@ defmodule AwsSsmProvider.MixProject do
   def project do
     [
       app: :aws_ssm_provider,
-      version: "0.2.1",
-      elixir: "~> 1.7",
+      version: "1.0.0",
+      elixir: "~> 1.8",
       name: "AwsSsmProvider",
       description: "A configuration provider for Distillery which handles AWS SSM parameters",
       package: package(),
@@ -23,8 +23,8 @@ defmodule AwsSsmProvider.MixProject do
 
   defp deps do
     [
-      {:distillery, "~> 2.0"},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:distillery, "~> 2.1"},
+      {:ex_doc, "~> 0.20.2", only: :dev, runtime: false},
       {:jason, "~> 1.1"}
     ]
   end

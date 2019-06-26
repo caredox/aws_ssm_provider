@@ -18,7 +18,7 @@ For example, a typical path you might set in SSM for your elixir project would b
 
 ### Shared Configs
 
-In order to share configs across environments, aws_ssm_provider looks for the magic string `host_app` and replaces it with the second element in the list passed to the provider. The second element is optional in the list.  
+In order to share configs across environments, aws_ssm_provider looks for the magic string `host_app` and replaces it with the second element in the list passed to the provider. The second element is optional in the list.
 
 If you had an SSM config that looked like `/production/my_project/host_app/shared_config`, and your `rel/config.exs` file had something that looked like this
 
@@ -78,12 +78,17 @@ If you have a variable in your system environment that you want injected in an a
 
 ## Installation
 
+The correct version for your needs depends on the version of Distillery your project uses:
+
+- For Distillery versions `2.1.0` and later, you want `{:aws_ssm_provider, "~> 1.0.0"}`.
+- For Distillery versions `2.0.14` and earlier, you want `{:aws_ssm_provider, "~> 0.2.1"}`.
+
 The package can be installed by adding `aws_ssm_provider` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:aws_ssm_provider, "~> 0.1.3"}
+    {:aws_ssm_provider, "~> 1.0.0"}
   ]
 end
 ```
