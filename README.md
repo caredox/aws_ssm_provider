@@ -1,10 +1,11 @@
 # aws_ssm_provider
 
-A configuration provider for Distillery which handles AWS SSM parameters.
+A configuration provider for Mix which handles AWS SSM parameters.
 
 ## Usage
 
-This package is intended to be used in conjunction with [Distillery Config Providers](https://hexdocs.pm/distillery/config/runtime.html#config-providers).
+This package is intended to be used in conjunction with Mix Config.Providers in Elixir 1.9+
+
 To generate the file the config provider will read, run a command similar to
 
 ```bash
@@ -18,19 +19,9 @@ For example, a typical path you might set in SSM for your elixir project would b
 
 ### Shared Configs
 
-In order to share configs across environments, aws_ssm_provider looks for the magic string `host_app` and replaces it with the second element in the list passed to the provider. The second element is optional in the list.
+In order to share configs across environments, aws_ssm_provider looks for the magic string `host_app` and replaces it with the environment variable `APP_NAME`
 
-If you had an SSM config that looked like `/production/my_project/host_app/shared_config`, and your `rel/config.exs` file had something that looked like this
-
-```elixir
-  set(
-    config_providers: [
-      {AwsSsmProvider, ["/etc/shared_secrets.json", :my_otp_app]}
-    ]
-  )
-```
-
-then the shared config would be placed in your app called `my_otp_app`.
+If you had an SSM config that looked like `/production/my_project/host_app/shared_config`, and your environment had a `APP_NAME` variable that was `my_otp_app` then the `shared_config` value would be placed in your app called `my_otp_app`.
 
 ### Nesting
 
@@ -78,17 +69,18 @@ If you have a variable in your system environment that you want injected in an a
 
 ## Installation
 
-The correct version for your needs depends on the version of Distillery your project uses:
+The correct version for your needs depends on the version of Distillery or Elixir your project uses:
 
 - For Distillery versions `2.1.0` and later, you want `{:aws_ssm_provider, "~> 1.0.0"}`.
 - For Distillery versions `2.0.14` and earlier, you want `{:aws_ssm_provider, "~> 0.2.1"}`.
+- For Elixir versions `1.9` and later (without Distillery), you want `{:aws_ssm_provider, "~> 2.0.0"}`.
 
 The package can be installed by adding `aws_ssm_provider` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:aws_ssm_provider, "~> 1.0.0"}
+    {:aws_ssm_provider, "~> 2.0.0"}
   ]
 end
 ```

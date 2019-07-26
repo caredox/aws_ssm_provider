@@ -3,11 +3,14 @@ defmodule AwsSsmProviderTest do
   doctest AwsSsmProvider
 
   setup_all do
+    System.put_env("APP_NAME", "aws_ssm_provider")
+
     app_configs = Path.join([__DIR__, "fixtures", "app_configs.json"])
     global_configs = Path.join([__DIR__, "fixtures", "global_configs.json"])
+    initial_state = %{}
 
-    AwsSsmProvider.init([global_configs, :aws_ssm_provider])
-    AwsSsmProvider.init([app_configs])
+    AwsSsmProvider.load(initial_state, global_configs)
+    AwsSsmProvider.load(initial_state, app_configs)
     %{}
   end
 
