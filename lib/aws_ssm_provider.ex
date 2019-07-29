@@ -2,22 +2,33 @@ defmodule AwsSsmProvider do
   @moduledoc """
   Populate run time application variables from a file produced by a call to AWS SSM
   """
-  use Distillery.Releases.Config.Provider
+
+  @behaviour Config.Provider
 
   @replacement_key :host_app
+  @app_name_env_var "APP_NAME"
 
-  def init([config_path | app_name]) do
-    # Helper which expands paths to absolute form
-    # and expands env vars in the path of the form `${VAR}`
-    # to their value in the system environment
-    {:ok, config_path} = Provider.expand_path(config_path)
-    # All applications are already loaded at this point
+  def init(path) when is_binary(path), do: path
+
+  def load(_current_configuration, config_path) do
+    {:ok, _} = Application.ensure_all_started(:jason)
+
+    app_name = fetch_app_name()
+
     if File.exists?(config_path) do
       File.read!(config_path)
       |> Jason.decode!()
       |> set_vars(app_name)
     else
       :error
+    end
+  end
+
+  defp fetch_app_name do
+    case System.get_env(@app_name_env_var) do
+      nil -> nil
+      "" -> nil
+      app_name -> String.to_atom(app_name)
     end
   end
 
@@ -36,12 +47,11 @@ defmodule AwsSsmProvider do
     set_vars(tail, app_name)
   end
 
-  defp set_app_name(name, []), do: name
-
+  defp set_app_name(name, nil), do: name
   # If an app_name was provided to the config provider,
   # then we want to replace the content retrieved from SSM if it was set to host_app.
   # This is useful when we pull shared configs, but need to assign it to an app not named :host_app.
-  defp set_app_name(name, [app_name]) when is_atom(app_name) do
+  defp set_app_name(name, app_name) when is_atom(app_name) do
     [head | tail] = name
 
     if head == @replacement_key do
