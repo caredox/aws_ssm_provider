@@ -10,17 +10,18 @@ defmodule AwsSsmProvider do
 
   def init(path) when is_binary(path), do: path
 
-  def load(_current_configuration, config_path) do
+  def load(initial_configs, config_path) do
     {:ok, _} = Application.ensure_all_started(:jason)
 
     app_name = fetch_app_name()
 
-    if File.exists?(config_path) do
-      File.read!(config_path)
-      |> Jason.decode!()
-      |> set_vars(app_name)
+    with {:ok, content} <- File.read(config_path),
+         {:ok, ssm_configs} <- Jason.decode(content),
+         {:ok, configs} <- parse_ssm_config(ssm_configs, app_name) do
+      Config.Reader.merge(initial_configs, configs)
     else
-      :error
+      {:error, err} -> throw({:error, err})
+      err -> throw({:unown_error, err})
     end
   end
 
@@ -32,64 +33,71 @@ defmodule AwsSsmProvider do
     end
   end
 
-  defp set_vars([], _), do: :ok
+  defp parse_ssm_config(ssm_configs, app_name) do
+    configs =
+      ssm_configs
+      |> Enum.map(&lex_ssm_entry(&1, app_name))
+      |> Enum.map(&build_config_branch/1)
+      |> Enum.reduce([], fn new_config, prev_configs ->
+        Config.Reader.merge(prev_configs, new_config)
+      end)
 
-  defp set_vars([head | tail], app_name) do
-    val = translate_values(head["Value"])
+    {:ok, configs}
+  end
 
-    head["Name"]
-    |> String.split("/", trim: true)
-    |> Enum.map(&String.to_atom/1)
-    |> remove_prefix_keys
-    |> set_app_name(app_name)
-    |> persist(val)
+  @type lexed_entry :: {path :: [atom()], value :: term()}
+  @spec lex_ssm_entry(%{String.t() => String.t(), String.t() => any()}, String.t()) ::
+          lexed_entry()
+  defp lex_ssm_entry(entry, app_name) do
+    value = entry["Value"]
 
-    set_vars(tail, app_name)
+    path =
+      entry["Name"]
+      |> String.split("/", trim: true)
+      |> Enum.map(&String.to_atom/1)
+      |> remove_prefix_keys()
+      |> set_app_name(app_name)
+
+    {path, value}
+  end
+
+  # Takes a keypath and a value to a branch of a config tree. E.g.,
+  #
+  #   build_config_branch({[:a, :b, :c], :value})
+  #   => [a: [b: [c: :value]]]
+  defp build_config_branch({path, value}) do
+    path
+    |> Enum.reverse()
+    |> Enum.reduce(value, &convert_value/2)
+  end
+
+  # Convert the value, based on the final key in the path
+  # If thefinal key is not a special conversion keyword,
+  # just return the final segment of the path to the value
+  defp convert_value(key, value) do
+    case key do
+      :FromSystem -> System.get_env(value)
+      :Integer -> String.to_integer(value)
+      :Regex -> Regex.compile!(value)
+      :JsonArray -> convert_json_array(value)
+      key -> [{key, translate_value(value)}]
+    end
   end
 
   defp set_app_name(name, nil), do: name
   # If an app_name was provided to the config provider,
   # then we want to replace the content retrieved from SSM if it was set to host_app.
   # This is useful when we pull shared configs, but need to assign it to an app not named :host_app.
-  defp set_app_name(name, app_name) when is_atom(app_name) do
-    [head | tail] = name
-
-    if head == @replacement_key do
-      [app_name | tail]
-    else
-      name
-    end
+  defp set_app_name([head | tail] = name, app_name) when is_atom(app_name) do
+    if head == @replacement_key, do: [app_name | tail], else: name
   end
 
   defp remove_prefix_keys([_env, _project | tail]), do: tail
 
-  defp persist([app, head_key | [:FromSystem]], val) do
-    Application.put_env(app, head_key, System.get_env(val))
-  end
+  defp convert_json_array(v), do: v |> Jason.decode!() |> Enum.map(&handle_array_val/1)
 
-  defp persist([app, head_key | [:Integer]], val) do
-    Application.put_env(app, head_key, String.to_integer(val))
-  end
-
-  defp persist([app, head_key | [:Regex]], val) do
-    with {:ok, regex} <- Regex.compile(val) do
-      Application.put_env(app, head_key, regex)
-    end
-  end
-
-  defp persist([app, head_key | [:JsonArray]], val) do
-    list_val = val |> Jason.decode!() |> Enum.map(&handle_array_val/1)
-    Application.put_env(app, head_key, list_val)
-  end
-
-  defp persist([app, head_key | []], val) do
-    Application.put_env(app, head_key, val)
-  end
-
-  defp persist([app, head_key | tail_keys], val) do
-    app_vars = Application.get_env(app, head_key) || []
-    Application.put_env(app, head_key, set_nested_vars(app_vars, tail_keys, val))
-  end
+  defp handle_array_val(val) when is_integer(val), do: val
+  defp handle_array_val(val) when is_list(val), do: val |> Enum.map(&handle_array_val/1)
 
   defp handle_array_val(val) when is_binary(val) do
     case String.split(val, "/Regex") do
@@ -98,53 +106,7 @@ defmodule AwsSsmProvider do
     end
   end
 
-  defp handle_array_val(val) when is_list(val) do
-    val |> Enum.map(&handle_array_val/1)
-  end
-
-  defp handle_array_val(val) when is_integer(val), do: val
-
-  defp set_nested_vars(parent_vars, [head], value) do
-    Keyword.drop(parent_vars, [head])
-    |> List.flatten([{head, value}])
-  end
-
-  defp set_nested_vars(parent_vars, [head | tail], value) do
-    nested_case(tail, [{head, value} | parent_vars])
-  end
-
-  defp nested_case([:FromSystem], [{head, value} | parent_vars]) do
-    Keyword.drop(parent_vars, [head])
-    |> List.flatten([{head, System.get_env(value)}])
-  end
-
-  defp nested_case([:Integer], [{head, value} | parent_vars]) do
-    Keyword.drop(parent_vars, [head])
-    |> List.flatten([{head, String.to_integer(value)}])
-  end
-
-  defp nested_case([:Regex], [{head, value} | parent_vars]) do
-    with {:ok, regex} <- Regex.compile(value) do
-      Keyword.drop(parent_vars, [head])
-      |> List.flatten([{head, regex}])
-    end
-  end
-
-  defp nested_case([:JsonArray], [{head, value} | parent_vars]) do
-    list_val = value |> Jason.decode!() |> Enum.map(&handle_array_val/1)
-
-    Keyword.drop(parent_vars, [head])
-    |> List.flatten([{head, list_val}])
-  end
-
-  defp nested_case(tail, [{head, value} | parent_vars]) do
-    curr_vars = parent_vars[head] || []
-    [{head, set_nested_vars(curr_vars, tail, value)} | parent_vars]
-  end
-
-  defp translate_values(v) do
-    Map.get(translations(), v, v)
-  end
+  defp translate_value(v), do: Map.get(translations(), v, v)
 
   defp translations do
     %{
