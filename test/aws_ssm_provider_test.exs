@@ -8,6 +8,7 @@ defmodule AwsSsmProviderTest do
     empty_configs = Path.join([__DIR__, "fixtures", "empty_configs.json"])
     app_configs = Path.join([__DIR__, "fixtures", "app_configs.json"])
     global_configs = Path.join([__DIR__, "fixtures", "global_configs.json"])
+    invalid_configs = Path.join([__DIR__, "fixtures", "invalid_configs.json"])
     initial_config = []
 
     %{
@@ -16,7 +17,8 @@ defmodule AwsSsmProviderTest do
         empty: empty_configs,
         app: app_configs,
         global: global_configs
-      }
+      },
+      invalid_config: invalid_configs
     }
   end
 
@@ -49,14 +51,40 @@ defmodule AwsSsmProviderTest do
     ]
   end
 
-  test "loading an empty config is the empty list", context do
-    assert AwsSsmProvider.load(context.initial_config, context.config.empty) == []
-  end
+  describe "when loading config files" do
+    test "an empty config yields the empty list", context do
+      assert AwsSsmProvider.load(context.initial_config, context.config.empty) == []
+    end
 
-  test "loading a config returns a keyword list", context do
-    Enum.each(context.config, fn {_, config_file} ->
-      assert Keyword.keyword?(AwsSsmProvider.load(context.initial_config, config_file))
-    end)
+    test "a valid config returns a keyword list", context do
+      Enum.each(context.config, fn {_, config_file} ->
+        assert Keyword.keyword?(AwsSsmProvider.load(context.initial_config, config_file))
+      end)
+    end
+
+    test "a nonexisting file throws a clear error message", context do
+      fake_file = "a_nonexistant_file.json"
+
+      try do
+        AwsSsmProvider.load(context.initial_config, fake_file)
+      catch
+        caught ->
+          assert {:error, msg} = caught
+          assert msg == "Error reading file #{fake_file}: no such file or directory"
+      end
+    end
+
+    test "a file with invalid JSON throws a clear error message", context do
+      try do
+        AwsSsmProvider.load(context.initial_config, context.invalid_config)
+      catch
+        caught ->
+          assert {:error, msg} = caught
+
+          assert msg ==
+                   "Error decoding JSON in file #{context.invalid_config}: unexpected end of input at position 50"
+      end
+    end
   end
 
   describe "in the parsed app config" do

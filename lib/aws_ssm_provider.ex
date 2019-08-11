@@ -20,8 +20,12 @@ defmodule AwsSsmProvider do
          {:ok, configs} <- parse_ssm_config(ssm_configs, app_name) do
       Config.Reader.merge(initial_configs, configs)
     else
-      {:error, err} -> throw({:error, err})
-      err -> throw({:unown_error, err})
+      {:error, err} ->
+        msg = error_message(err, config_path)
+        throw({:error, msg})
+
+      err ->
+        throw({:unown_error, err})
     end
   end
 
@@ -113,5 +117,32 @@ defmodule AwsSsmProvider do
       "true" => true,
       "false" => false
     }
+  end
+
+  # ERROR HANDLING
+  defp error_message(err, path) do
+    if is_file_read_error?(err) do
+      file_error_message(err, path)
+    else
+      case err do
+        %Jason.DecodeError{} -> json_error_message(err, path)
+        _ -> err
+      end
+    end
+  end
+
+  defp is_file_read_error?(err) do
+    file_read_errors = [:enoent, :eacces, :eisdir, :enotdir, :enomem]
+    Enum.member?(file_read_errors, err)
+  end
+
+  defp file_error_message(err, path) do
+    file_error = :file.format_error(err)
+    "Error reading file #{path}: #{file_error}"
+  end
+
+  defp json_error_message(err, path) do
+    json_err = Jason.DecodeError.message(err)
+    "Error decoding JSON in file #{path}: #{json_err}"
   end
 end
