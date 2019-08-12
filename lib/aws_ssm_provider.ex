@@ -25,7 +25,7 @@ defmodule AwsSsmProvider do
         throw({:error, msg})
 
       err ->
-        throw({:unown_error, err})
+        throw({:unknown_error, err})
     end
   end
 
