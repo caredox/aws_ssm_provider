@@ -76,7 +76,7 @@ defmodule AwsSsmProvider do
   end
 
   # Convert the value, based on the final key in the path
-  # If thefinal key is not a special conversion keyword,
+  # If the final key is not a special conversion keyword,
   # just return the final segment of the path to the value
   defp convert_value(key, value) do
     case key do
