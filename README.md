@@ -47,7 +47,7 @@ To set an integer in your application config, simply end your SSM path in `/Inte
 
 #### Atoms
 
-To set an integer in your application config, simply end your SSM path in `/Atom`. 
+To set an atom in your application config, simply end your SSM path in `/Atom`. 
 
 #### Regular Expressions
 
