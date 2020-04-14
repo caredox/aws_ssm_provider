@@ -13,7 +13,7 @@ defmodule AwsSsmProviderTest do
 
     %{
       initial_config: initial_config,
-      config: %{
+      config_files: %{
         empty: empty_configs,
         app: app_configs,
         global: global_configs
@@ -53,13 +53,19 @@ defmodule AwsSsmProviderTest do
 
   describe "when loading config files" do
     test "an empty config yields the empty list", context do
-      assert AwsSsmProvider.load(context.initial_config, context.config.empty) == []
+      assert AwsSsmProvider.load(context.initial_config, context.config_files.empty) == []
     end
 
     test "a valid config returns a keyword list", context do
-      Enum.each(context.config, fn {_, config_file} ->
+      Enum.each(context.config_files, fn {_, config_file} ->
         assert Keyword.keyword?(AwsSsmProvider.load(context.initial_config, config_file))
       end)
+    end
+
+    test "a valid config maintains the initial config when there are no overlaps", context do
+      initial_config = [aws_ssm_provider: [initial_config: "existing value"]]
+      result = AwsSsmProvider.load(initial_config, context.config_files.app)
+      assert result[:aws_ssm_provider][:initial_config] == "existing value"
     end
 
     test "a nonexisting file throws a clear error message", context do
@@ -89,7 +95,7 @@ defmodule AwsSsmProviderTest do
 
   describe "in the parsed app config" do
     setup context do
-      %{config: AwsSsmProvider.load(context.initial_config, context.config.app)}
+      %{config: AwsSsmProvider.load(context.initial_config, context.config_files.app)}
     end
 
     test "string_val is set at the root level", context do
@@ -211,8 +217,8 @@ defmodule AwsSsmProviderTest do
     setup context do
       config =
         context.initial_config
-        |> AwsSsmProvider.load(context.config.global)
-        |> AwsSsmProvider.load(context.config.app)
+        |> AwsSsmProvider.load(context.config_files.global)
+        |> AwsSsmProvider.load(context.config_files.app)
 
       %{config: config}
     end
@@ -275,6 +281,23 @@ defmodule AwsSsmProviderTest do
                context.config[:aws_ssm_provider][:nested][
                  :unique_nested_app_and_env_global_config
                ]
+    end
+
+    test "root level capital atom is converted", context do
+      assert CapitalAtom == context.config[:aws_ssm_provider][:capital_atom]
+    end
+
+    test "nested capital atom is converted", context do
+      assert Nested.Capital.Atom ==
+               context.config[:aws_ssm_provider][:nested][:nested_capital_atom]
+    end
+
+    test "root level lowercase atom is converted", context do
+      assert :iAmAtom == context.config[:aws_ssm_provider][:lowercase_atom]
+    end
+
+    test "nested lowercase atom is converted", context do
+      assert :nestedAtom == context.config[:aws_ssm_provider][:nested][:nested_lowercase_atom]
     end
   end
 end

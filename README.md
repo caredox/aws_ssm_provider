@@ -45,6 +45,10 @@ All SSM keys are returned as strings. If you want to set your value as another t
 
 To set an integer in your application config, simply end your SSM path in `/Integer`. For example, if you wanted your port to be `4000` and not `"4000"`, your SSM key would look like `/staging/myApp/port/Integer`
 
+#### Atoms
+
+To set an atom in your application config, simply end your SSM path in `/Atom`. 
+
 #### Regular Expressions
 
 To set a regex in your application config, simply end your SSM path in `/Regex`. For example, if you wanted a fileName config to match `"2019.csv"`, your SSM key would look like `/staging/myApp/fileName/Regex`. The value you enter in SSM would be

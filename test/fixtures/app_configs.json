@@ -218,5 +218,21 @@
     {
         "Name": "/global/global/hostapp/overwritten_app_and_env_config",
         "Value": "app and env is hostapp was overwritten"
+    },
+    {
+        "Name": "/global/global/aws_ssm_provider/capital_atom/Atom",
+        "Value": "Elixir.CapitalAtom"
+    },
+    {
+        "Name": "/global/global/aws_ssm_provider/nested/nested_capital_atom/Atom",
+        "Value": "Elixir.Nested.Capital.Atom"
+    },
+    {
+        "Name": "/global/global/aws_ssm_provider/lowercase_atom/Atom",
+        "Value": "iAmAtom"
+    },
+    {
+        "Name": "/global/global/aws_ssm_provider/nested/nested_lowercase_atom/Atom",
+        "Value": "nestedAtom"
     }
 ]

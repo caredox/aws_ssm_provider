@@ -4,7 +4,7 @@ defmodule AwsSsmProvider.MixProject do
   def project do
     [
       app: :aws_ssm_provider,
-      version: "3.0.0",
+      version: "3.0.1",
       elixir: "~> 1.9",
       name: "AwsSsmProvider",
       description: "A configuration provider for Mix which handles AWS SSM parameters",
