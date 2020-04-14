@@ -84,6 +84,7 @@ defmodule AwsSsmProvider do
       :Integer -> String.to_integer(value)
       :Regex -> Regex.compile!(value)
       :JsonArray -> convert_json_array(value)
+      :Atom -> String.to_atom(value)
       key -> [{key, translate_value(value)}]
     end
   end
